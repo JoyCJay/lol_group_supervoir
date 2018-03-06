@@ -1,9 +1,20 @@
+
+#!/usr/bin/python3
 import json
 from urllib.request import urlopen
 import sys
 import time
 
-API_KEY = "api_key=RGAPI-26722c4b-ada3-4885-adec-3b520b4a0415"
+API_KEY = "api_key=RGAPI-0ec2da59-634a-4b5a-9020-fda3bc89fffe"
+
+def get_spell_name(spellId):
+    with open ("./resource/summoner-spells.json","r") as ch:
+        load_ch = json.load(ch)
+        #print(load_ch["data"])
+    for a in load_ch["data"]:
+        if load_ch["data"][a]["id"] == spellId:
+            return load_ch["data"][a]["name"]
+            break
 
 def get_champion_name(championId):
     with open ("./resource/champion.json","r") as ch:
@@ -16,10 +27,14 @@ def get_champion_name(championId):
 def get_item_name(itemId):
     with open ("./resource/items.json","r") as it:
         load_it = json.load(it)
-    for a in load_it["data"]:
-        if load_it["data"][a]["id"] == itemId:
-            return load_it["data"][a]["name"]
-            break
+    if itemId == 0:
+        return " "
+    else:
+        for a in load_it["data"]:
+            if load_it["data"][a]["id"] == itemId:
+                return load_it["data"][a]["name"]
+                break
+        return "Not found"
 
 def match_info(match_dict):
     print("Game Details","Duration:",match_dict["gameDuration"]//60,":",match_dict["gameDuration"]%60)

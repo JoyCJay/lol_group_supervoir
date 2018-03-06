@@ -1,6 +1,11 @@
+#!/usr/bin/python3
 import os
 import sys
 import time
+import json
+from urllib.request import urlopen
+
+import analyzer
 import self_functions
 
 os.system("clear")
@@ -33,17 +38,41 @@ else:
     print(summoner_dict["name"]+" is in the game")
 
 
+
+
+
+
+
 print("\n","Recent matches".center(110,"*"))
-matches_dict = self_functions.Request_matches()
-for a in range(len(matches_dict["matches"])):
-            print(str(a+1).ljust(3),time.strftime("%Y-%m-%d %H:%M", time.localtime(int(matches_dict["matches"][a]["timestamp"])/1000)),"",
-                                       "gameId:",str(matches_dict["matches"][a]["gameId"]).ljust(11),
-                                     "champion:",
-                                     str(self_functions.get_champion_name(matches_dict["matches"][a]["champion"])).center(11,"-"),
-                                     #str(matches_dict["matches"][a]["champion"]).center(3),
-                                         "lane:",str(matches_dict["matches"][a]["lane"]).ljust(7)
-                                    )
-            match_dict = self_functions.Request_match(str(matches_dict["matches"][a]["gameId"]))
-            self_functions.match_info(match_dict)
+matches_list = self_functions.Request_matches()
+report = analyzer.matches_reporter()
+
+for a in range(len(matches_list["matches"])):
+    match_dict = self_functions.Request_match(str(matches_list["matches"][a]["gameId"]))
+
+    match = analyzer.match_analyzer(match_dict,summoner_dict["name"])
+    #把每一场的关键信息（match。export（）导出，由report.rattacher（）导入）
+    report.rattacher(match.export())
+    if len(sys.argv) > 2 :
+        match.display_all()
+    else:
+        match.display()
+
+report.analyze()
+
+report.output()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 print("\n\n","Script End".center(110,"*"))
